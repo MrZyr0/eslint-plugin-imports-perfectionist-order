@@ -1,18 +1,11 @@
 'use strict';
 
 import { RuleTester } from 'eslint';
+import { createRequire } from 'module';
 import tsParser from '@typescript-eslint/parser';
 import rule from '../../../lib/rules/sort.js';
 
-const jsRuleTester = new RuleTester({
-	languageOptions: { ecmaVersion: 2022, sourceType: 'module' },
-});
-
-const tsRuleTester = new RuleTester({
-	languageOptions: { parser: tsParser, parserOptions: { ecmaVersion: 2022, sourceType: 'module' } },
-});
-
-jsRuleTester.run('sort', rule, {
+const jsTestCases = {
 	valid: [
 		// =========================================================================
 		// TESTS WITH GROUPS + DIRECTION ASC
@@ -1054,9 +1047,9 @@ import utils from 'src/utils';
 			errors: [{ messageId: 'sortImports' }],
 		},
 	],
-});
+};
 
-tsRuleTester.run('sort', rule, {
+const tsTestCases = {
 	valid: [
 		{
 			name: 'TypeScript type imports',
@@ -1122,4 +1115,114 @@ import type { User } from './types';
 			errors: [{ messageId: 'sortImports' }],
 		},
 	],
-});
+};
+
+// ---------------------------------------------------------------------------
+// Version detection
+// ---------------------------------------------------------------------------
+const require = createRequire(import.meta.url);
+const eslintPkg = require('eslint/package.json');
+const eslintMajor = parseInt(eslintPkg.version.split('.')[0], 10);
+const IS_ESLINT9_PLUS = eslintMajor >= 9;
+
+// For ESLint 8, it's safer to use the parser path
+const tsParserPath = require.resolve('@typescript-eslint/parser');
+
+// ---------------------------------------------------------------------------
+// RuleTester base configs
+// ---------------------------------------------------------------------------
+// ESLint >= 9: "flat" config using languageOptions
+const baseConfigFlat = { languageOptions: { ecmaVersion: 2022, sourceType: 'module' } };
+
+const tsConfigFlat = {
+	languageOptions: { parser: tsParser, parserOptions: { ecmaVersion: 2022, sourceType: 'module' } },
+};
+
+// ESLint 8: legacy config using parserOptions (with parser for TS)
+const legacyBaseConfig = {
+	parserOptions: { ecmaVersion: 2022, sourceType: 'module', ecmaFeatures: { jsx: true } },
+};
+
+const legacyTsConfig = {
+	parser: tsParserPath,
+	parserOptions: { ecmaVersion: 2022, sourceType: 'module', ecmaFeatures: { jsx: true } },
+};
+
+// Instantiate RuleTesters
+const jsRuleTester = new RuleTester(IS_ESLINT9_PLUS ? baseConfigFlat : legacyBaseConfig);
+const tsRuleTester = new RuleTester(IS_ESLINT9_PLUS ? tsConfigFlat : legacyTsConfig);
+
+// ---------------------------------------------------------------------------
+// Compatibility adapter (ESLint 9 → ESLint 8)
+// ---------------------------------------------------------------------------
+/**
+ * Converts test cases from ESLint 9+ format (languageOptions)
+ * to ESLint 8 format (parser / parserOptions). Also removes `name`.
+ * - If isTypeScriptTest = true, enforces TS parser for ESLint 8.
+ */
+/**
+ * Adjust test cases for compatibility between ESLint 8 and 9
+ *
+ * This function converts test cases from ESLint 9+ format (using languageOptions)
+ * to ESLint 8 format (using parser and parserOptions directly).
+ * @param {object} testCases - The test cases to adjust
+ * @param {boolean} isFlatFormat - Whether ESLint 9+ is being used
+ * @param {boolean} isTypeScriptTest - Whether the test case is for TypeScript
+ * @returns {object} Adjusted test cases
+ */
+function adaptTestCasesForCompatibility(testCases, isFlatFormat, isTypeScriptTest = false) {
+	if (isFlatFormat) return testCases; // ESLint 9+: pas de conversion [file:54]
+
+	// eslint-disable-next-line func-style -- needed to use adaptTestCasesForCompatibility params
+	const convertOne = test => {
+		delete test.name;
+		const { languageOptions, ...rest } = test; // `name` not supported in ESLint 8 [file:54]
+		const out = { ...rest };
+
+		// Get ecmaVersion/sourceType from languageOptions if they exist
+		const lo = languageOptions || {};
+		const loParser = lo.parser;
+		const loParserOptions = lo.parserOptions || {};
+		const loEcmaVersion = lo.ecmaVersion;
+		const loSourceType = lo.sourceType;
+
+		// Prepare parserOptions
+		const parserOptions = {
+			// Priority: explicit values already present on the test (if the author provided them)
+			...(out.parserOptions || {}),
+			// Then those from languageOptions (ESLint 9)
+			...(loParserOptions || {}),
+		};
+
+		if (loEcmaVersion && !parserOptions.ecmaVersion) parserOptions.ecmaVersion = loEcmaVersion;
+		if (loSourceType && !parserOptions.sourceType) parserOptions.sourceType = loSourceType;
+
+		// Determine parser for ESLint 8
+		if (isTypeScriptTest) {
+			// Force TS parser for all TS tests on ESLint 8
+			out.parser = tsParserPath;
+		} else if (loParser) {
+			// If a parser was defined in languageOptions (rare in pure JS), carry it over
+			// On ESLint 8 side, use resolved path if possible
+			out.parser = typeof loParser === 'string' ? loParser : tsParserPath;
+		}
+
+		if (Object.keys(parserOptions).length > 0) {
+			out.parserOptions = parserOptions;
+		}
+
+		return out;
+	};
+
+	return {
+		valid: (testCases.valid || []).map(convertOne),
+		invalid: (testCases.invalid || []).map(convertOne),
+	};
+}
+
+// ---------------------------------------------------------------------------
+// Run RuleTester
+// ---------------------------------------------------------------------------
+jsRuleTester.run('sort', rule, adaptTestCasesForCompatibility(jsTestCases, IS_ESLINT9_PLUS, false));
+
+tsRuleTester.run('sort', rule, adaptTestCasesForCompatibility(tsTestCases, IS_ESLINT9_PLUS, true));
