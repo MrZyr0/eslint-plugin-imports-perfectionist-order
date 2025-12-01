@@ -1,0 +1,76 @@
+{
+	"name": "eslint-plugin-imports-perfectionist-order",
+	"version": "0.1.0",
+	"description": "ESLint plugin that allows you to efficiently sort imports and is fully configurable according to your preferences.",
+	"main": "index.js",
+	"type": "module",
+	"files": [
+		"index.js",
+		"lib/"
+	],
+	"exports": {
+		".": "./index.js"
+	},
+	"keywords": [
+		"eslint",
+		"eslintplugin",
+		"eslint-plugin",
+		"imports",
+		"sort",
+		"order",
+		"perfectionist"
+	],
+	"author": "Zyr0 <32927775+MrZyr0@users.noreply.github.com>",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/MrZyr0/eslint-plugin-imports-perfectionist-order"
+	},
+	"bugs": {
+		"url": "https://github.com/MrZyr0/eslint-plugin-imports-perfectionist-order/issues"
+	},
+	"homepage": "https://github.com/MrZyr0/eslint-plugin-imports-perfectionist-order#readme",
+	"packageManager": "yarn@4.10.3",
+	"volta": {
+		"node": "25.0.0",
+		"yarn": "4.10.3"
+	},
+	"engines": {
+		"node": ">=18.0.0"
+	},
+	"scripts": {
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
+		"format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+		"format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,md}\"",
+		"test": "mocha tests --recursive",
+		"prepare": "yarn lint && yarn format && yarn test",
+		"release": "semantic-release",
+		"check:node": "node --version && echo 'Node.js version OK'",
+		"check:eslint": "eslint --version && echo 'ESLint version OK'"
+	},
+	"peerDependencies": {
+		"eslint": ">=8.0.0"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.39.1",
+		"@semantic-release/changelog": "^6.0.3",
+		"@semantic-release/git": "^10.0.1",
+		"@semantic-release/github": "^12.0.2",
+		"@semantic-release/npm": "^13.1.2",
+		"@types/eslint": "^9.6.1",
+		"@typescript-eslint/parser": "^8.48.0",
+		"eslint": "^9.39.1",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-eslint-comments": "^3.2.0",
+		"eslint-plugin-eslint-plugin": "^7.2.0",
+		"eslint-plugin-jsdoc": "^61.4.1",
+		"eslint-plugin-n": "^17.23.1",
+		"eslint-plugin-prettier": "^5.5.4",
+		"globals": "^16.5.0",
+		"mocha": "^11.7.5",
+		"prettier": "^3.7.3",
+		"semantic-release": "^25.0.2",
+		"typescript": "^5.9.3"
+	}
+}

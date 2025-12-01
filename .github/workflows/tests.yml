@@ -1,0 +1,96 @@
+name: tests
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  lint:
+    name: Linting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+
+      - name: Setup Yarn cache
+        uses: actions/cache@v4
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        env:
+          NODE_ENV: production
+        run: yarn install --frozen-lockfile --production=false
+
+      - name: Run linting
+        run: yarn lint
+
+  test-matrix:
+    name: Test Node.js ${{ matrix.node-version }} + ESLint ${{ matrix.eslint-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ["lts/-3", "lts/-2", "lts/-1", "latest"]
+        eslint-version: ["8.0.0", "8.50.0", "9.0.0", "latest"]
+        exclude:
+          # ESLint 9 requires Node.js >= 18.18.0
+          - node-version: "lts/-3"
+            eslint-version: "9.0.0"
+          - node-version: "lts/-3"
+            eslint-version: "latest"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+
+      - name: Setup Yarn cache
+        uses: actions/cache@v4
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        env:
+          NODE_ENV: production
+        run: yarn install --frozen-lockfile --production=false
+
+      - name: Install ESLint ${{ matrix.eslint-version }}
+        env:
+          NODE_ENV: production
+        run: |
+          yarn add -D eslint@${{ matrix.eslint-version }}
+          yarn add -D @typescript-eslint/parser@latest
+
+      - name: Run tests
+        env:
+          NODE_ENV: production
+        run: yarn test

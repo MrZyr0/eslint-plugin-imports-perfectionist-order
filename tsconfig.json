@@ -1,0 +1,50 @@
+{
+	"compilerOptions": {
+		"target": "esnext",
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"outDir": "./dist",
+		"baseUrl": "./",
+		// "allowJs": true,
+		"resolvePackageJsonExports": true,
+		"resolvePackageJsonImports": true,
+		"useDefineForClassFields": true,
+		"isolatedModules": true,
+		"esModuleInterop": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"allowSyntheticDefaultImports": true,
+		"removeComments": true,
+		"resolveJsonModule": true,
+		"noEmitOnError": true,
+		"declaration": true,
+		"declarationMap": true,
+		"preserveConstEnums": true,
+		"allowJs": false, // May be changed to allow importing JS only dependencies or services
+		"checkJs": false, // May be changed to allow importing JS only dependencies or services
+		"maxNodeModuleJsDepth": 0, // May be changed to allow importing JS only dependencies or services
+		// Build optimisation
+		"composite": true,
+		"incremental": true,
+		// Types security checks
+		"skipLibCheck": true,
+		"strict": true, // implicitly set alwaysStrict, strictNullChecks, strictBindCallApply, strictBuiltinIteratorReturn, strictFunctionTypes, strictPropertyInitialization, noImplicitAny, noImplicitThis, useUnknownInCatchVariable and useUnknownInCatchVariables to true
+		"allowUnreachableCode": false,
+		"allowUnusedLabels": false,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitOverride": true,
+		"noImplicitReturns": true,
+		"noImplicitThis": true,
+		"noUncheckedIndexedAccess": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"exactOptionalPropertyTypes": true,
+		"forceConsistentCasingInFileNames": true,
+		"rewriteRelativeImportExtensions": true, // implicitly set allowImportingTsExtensions to true
+		"noUncheckedSideEffectImports": true,
+		"allowImportingTsExtensions": true
+	},
+	"include": ["lib/**/*.js", "tests/**/*.js"],
+	"exclude": ["node_modules", "**/*.test.js"],
+	"watchOptions": { "excludeDirectories": ["**/node_modules/", "**/dist/", "**/coverage/"] }
+}
