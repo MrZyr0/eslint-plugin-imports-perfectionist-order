@@ -60,7 +60,6 @@
 		"@semantic-release/npm": "^13.1.2",
 		"@types/eslint": "^9.6.1",
 		"@typescript-eslint/parser": "^8.48.0",
-		"conventional-changelog-conventionalcommits": "^9.1.0",
 		"eslint": "^9.39.1",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-eslint-comments": "^3.2.0",
