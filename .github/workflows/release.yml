@@ -87,7 +87,7 @@ jobs:
 
       - name: Install dependencies
         env:
-          NODE_ENV: production
+          NODE_ENV: development
         run: |
           export VOLTA_HOME="$HOME/.volta"
           export PATH="$VOLTA_HOME/bin:$PATH"

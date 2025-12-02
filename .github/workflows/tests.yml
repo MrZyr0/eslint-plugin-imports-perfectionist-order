@@ -44,7 +44,7 @@ jobs:
 
       - name: Install dependencies
         env:
-          NODE_ENV: production
+          NODE_ENV: development
         run: yarn install --immutable
 
       - name: Run linting
@@ -99,17 +99,17 @@ jobs:
 
       - name: Install dependencies
         env:
-          NODE_ENV: production
+          NODE_ENV: development
         run: yarn install --immutable
 
       - name: Install ESLint ${{ matrix.eslint-version }}
         env:
-          NODE_ENV: production
+          NODE_ENV: development
         run: |
           yarn add -D eslint@${{ matrix.eslint-version }}
           yarn add -D @typescript-eslint/parser@latest
 
       - name: Run tests
         env:
-          NODE_ENV: production
+          NODE_ENV: development
         run: yarn test
