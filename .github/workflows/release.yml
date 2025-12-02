@@ -2,10 +2,11 @@ name: Release
 
 on:
   workflow_run:
-    workflows: ["tests"]
+    workflows: ["Tests"]
     branches:
       - main
-    types: 
+      - develop
+    types:
       - completed
 
 jobs:
