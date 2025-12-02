@@ -57,6 +57,7 @@
 		"@semantic-release/changelog": "^6.0.3",
 		"@semantic-release/git": "^10.0.1",
 		"@semantic-release/github": "^12.0.2",
+		"@semantic-release/npm": "^13.1.2",
 		"@types/eslint": "^9.6.1",
 		"@typescript-eslint/parser": "^8.48.0",
 		"conventional-changelog-angular": "^8.1.0",
@@ -71,7 +72,6 @@
 		"mocha": "^11.7.5",
 		"prettier": "^3.7.3",
 		"semantic-release": "^25.0.2",
-		"semantic-release-yarn": "^3.0.2",
 		"typescript": "^5.9.3"
 	}
 }

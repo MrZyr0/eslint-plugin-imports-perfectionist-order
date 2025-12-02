@@ -32,12 +32,6 @@
       }
     ],
     [
-      "semantic-release-yarn",
-      {
-        "npmPublish": true
-      }
-    ],
-    [
       "@semantic-release/git",
       {
         "assets": ["CHANGELOG.md", "package.json"]
@@ -47,6 +41,12 @@
       "@semantic-release/github",
       {
         "successComment": ":tada: This ${issue.pull_request ? 'PR is included' : 'issue has been resolved'} in version ${nextRelease.version} :tada:\n\nThe release is available on:\n* [GitHub release](${releases.filter(r => r.name === 'v' + nextRelease.version)[0].url})\n* [npm package (@latest dist-tag)](https://www.npmjs.com/package/${process.env.npm_package_name}/v/${nextRelease.version})\n\nYour **[semantic-release](https://github.com/semantic-release/semantic-release)** bot :package::rocket:"
+      }
+    ],
+    [
+      "@semantic-release/npm",
+      {
+        "npmPublish": true
       }
     ]
   ]

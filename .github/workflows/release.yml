@@ -37,61 +37,15 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Resolve lts/-3 to concrete version
-        id: resolve-node
+      - name: Setup Node.js "lts/-3"
+        id: setup-node
         uses: actions/setup-node@v4
         with:
           node-version: "lts/-3"
 
-      - name: Resolve and capture Node.js version
-        id: node-version
+      - name: Setup npm for semantic-release only
         run: |
-          # Try to get version from setup-node output first
-          if [ -n "${{ steps.resolve-node.outputs.node-version }}" ] && [ "${{ steps.resolve-node.outputs.node-version }}" != 'undefined' ]; then
-            echo "Using Node.js version from setup-node output"
-            echo "resolved=${{ steps.resolve-node.outputs.node-version }}" >> $GITHUB_OUTPUT
-          else
-            # Fallback to node -v
-            echo "Falling back to node -v for version detection"
-            NODE_VERSION=$(node -v | cut -d'v' -f2)
-            echo "Detected Node.js version: $NODE_VERSION"
-            echo "resolved=$NODE_VERSION" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Install Volta
-        run: |
-          set -e
-          curl https://get.volta.sh | bash
-          export VOLTA_HOME="$HOME/.volta"
-          export PATH="$VOLTA_HOME/bin:$PATH"
-          volta --version
-
-      - name: Install Node and Yarn with Volta
-        env:
-          VOLTA_HOME: ${{ runner.temp }}
-        run: |
-          export VOLTA_HOME="$HOME/.volta"
-          export PATH="$VOLTA_HOME/bin:$PATH"
-          # Use the resolved node version from our custom step
-          NODE_VER="${{ steps.node-version.outputs.resolved }}"
-          if [ -z "$NODE_VER" ] || [ "$NODE_VER" = "undefined" ]; then
-            echo "::error::Could not resolve node version. Set NODE_VER in workflow or add a volta.node entry to package.json."
-            exit 1
-          fi
-          echo "Installing node@$NODE_VER with Volta"
-          volta install node@"$NODE_VER"
-          # Pin and install yarn (set the specific yarn version you need or omit to get latest)
-          volta install yarn
-          echo "volta installed:"
-          volta list
-
-      - name: Install dependencies
-        env:
-          NODE_ENV: development
-        run: |
-          export VOLTA_HOME="$HOME/.volta"
-          export PATH="$VOLTA_HOME/bin:$PATH"
-          yarn install --immutable
+          npm install -g @semantic-release/changelog semantic-release @semantic-release/git @semantic-release/github @semantic-release/npm @semantic-release/commit-analyzer @semantic-release/release-notes-generator
 
       - name: Create Release
         env:
@@ -100,8 +54,6 @@ jobs:
           YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          export VOLTA_HOME="$HOME/.volta"
-          export PATH="$VOLTA_HOME/bin:$PATH"
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > $HOME/.npmrc
-          yarn release
+          npx semantic-release
           echo "::notice::Release completed successfully"
