@@ -37,12 +37,16 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "lts/-3"
-          registry-url: "https://registry.npmjs.org"
-          cache: "yarn"
+      - name: Install Node "lts/-3" and Yarn using Volta
+        run: |
+          set -e
+          curl https://get.volta.sh | bash
+          export VOLTA_HOME="$HOME/.volta"
+          export PATH="$VOLTA_HOME/bin:$PATH"
+          volta install node@"lts/-3"
+          volta install yarn
+          yarn --version
+          node --version
 
       - name: Install dependencies
         env:
