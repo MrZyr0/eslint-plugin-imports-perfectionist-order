@@ -31,28 +31,75 @@ jobs:
           fi
           echo "::notice::NPM_TOKEN is configured"
 
-      - name: Checkout code
+      - name: Get branch name from workflow run
+        id: get-branch
+        run: |
+          BRANCH_NAME="${{ github.event.workflow_run.head_branch }}"
+          echo "Branch that triggered the workflow: $BRANCH_NAME"
+          echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
+
+      - name: Checkout code on triggered branch only
         uses: actions/checkout@v4
         with:
+          ref: ${{ steps.get-branch.outputs.branch }}
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Setup Git branches for semantic-release
+        run: |
+          CURRENT_BRANCH="${{ steps.get-branch.outputs.branch }}"
+    
+          git fetch origin --tags
+          
+          if [ "$CURRENT_BRANCH" = "main" ]; then
+            git fetch origin develop:develop
+          elif [ "$CURRENT_BRANCH" = "develop" ]; then
+            git fetch origin main:main
+          else
+            echo "::error::Unknown branch checkouted: $CURRENT_BRANCH - must be main or develop"
+            exit 1
+          fi
+          
+          echo "=== Git debugging ==="
+          echo "Current branch: $(git branch --show-current)"
+          echo "Symbolic ref: $(git symbolic-ref HEAD)"
+          echo "HEAD: $(git log -1 --oneline)"
+          git branch -vv
+          echo "=== Remote branches ==="
+          git branch -r
+          git status
+
       - name: Setup Node.js "lts/-3"
-        id: setup-node
         uses: actions/setup-node@v4
         with:
           node-version: "lts/-3"
 
       - name: Setup npm for semantic-release only
         run: |
-          npm install -g @semantic-release/changelog semantic-release @semantic-release/git @semantic-release/github @semantic-release/npm @semantic-release/commit-analyzer @semantic-release/release-notes-generator
+          npm install -g \
+          semantic-release \
+          @semantic-release/changelog \
+          @semantic-release/git \
+          @semantic-release/github \
+          @semantic-release/npm \
+          @semantic-release/commit-analyzer \
+          @semantic-release/release-notes-generator
 
       - name: Create Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # Enforce semantic-release to detect the correct branch
+          GITHUB_REF: refs/heads/${{ steps.get-branch.outputs.branch }}
+          GITHUB_HEAD_REF: ${{ steps.get-branch.outputs.branch }}
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > $HOME/.npmrc
+          
+          CURRENT_BRANCH=$(git branch --show-current)
+          echo "Running semantic-release on branch: $CURRENT_BRANCH"
+          echo "Symbolic ref is: $(git symbolic-ref HEAD)"
+          echo "GITHUB_REF is: $GITHUB_REF"
           npx semantic-release
+          
           echo "::notice::Release completed successfully"
