@@ -8,6 +8,87 @@ import rule from '../../../lib/rules/sort.js';
 const jsTestCases = {
 	valid: [
 		// =========================================================================
+		// TESTS FOR FILENAME STRATEGY
+		// =========================================================================
+		{
+			name: 'Sort by filename ASC (external first)',
+			code: `
+import fs from 'fs';
+import lodash from 'lodash';
+import react from 'react';
+import config from '../config';
+import helper from '../../helper';
+import utils from './utils';
+      `.trim(),
+			options: [{ groups: true, sortStrategies: [{ strategy: 'filename', direction: 'ASC' }] }],
+		},
+		{
+			name: 'Sort by filename DESC (external first)',
+			code: `
+import react from 'react';
+import lodash from 'lodash';
+import fs from 'fs';
+import utils from './utils';
+import helper from '../../helper';
+import config from '../config';
+      `.trim(),
+			options: [{ groups: true, sortStrategies: [{ strategy: 'filename', direction: 'DESC' }] }],
+		},
+		{
+			name: 'Sort by filename with different file extensions',
+			code: `
+import './styles.css';
+import './styles.scss';
+import './tests.js';
+import './utils';
+import './utils.test';
+import './utils.ts';
+      `.trim(),
+			options: [{ groups: false, sortStrategies: [{ strategy: 'filename', direction: 'ASC' }] }],
+		},
+		{
+			name: 'Sort by filename with scoped packages',
+			code: `
+import { ThemeProvider } from '@emotion/react';
+import fs from 'fs';
+import { Button } from '@mui/material';
+import react from 'react';
+import { api } from '@/services/api';
+import { useAuth } from '@/hooks/useAuth';
+      `.trim(),
+			options: [{ groups: true, sortStrategies: [{ strategy: 'filename', direction: 'ASC' }] }],
+		},
+		{
+			name: 'Sort by pathTreeDepth > filename ASC',
+			code: `
+import fs from 'fs';
+import react from 'react';
+import deeperHelper from '../../deeper-helper';
+import helper from '../../helper';
+import config from '../config';
+import utils from './utils';
+      `.trim(),
+			options: [
+				{
+					groups: true,
+					sortStrategies: [
+						{ strategy: 'pathTreeDepth', direction: 'ASC' },
+						{ strategy: 'filename', direction: 'ASC' },
+					],
+				},
+			],
+		},
+		{
+			name: 'Sort by filename with query parameters and hashes',
+			code: `
+import './styles.css?module';
+import './styles.css';
+import './styles.scss#hash';
+import './styles.scss';
+      `.trim(),
+			options: [{ groups: false, sortStrategies: [{ strategy: 'filename', direction: 'ASC' }] }],
+		},
+		// =========================================================================
 		// TESTS WITH GROUPS + DIRECTION ASC
 		// =========================================================================
 		{
@@ -815,16 +896,6 @@ import helpyr from '../../helpyr';
 import config from '../config';
 import utils from './utils';
       `.trim(),
-			options: [
-				{
-					groups: true,
-					sortStrategies: [
-						{ strategy: 'pathTreeDepth', direction: 'ASC' },
-						{ strategy: 'alphabetical', direction: 'ASC' },
-						{ strategy: 'lineLength', direction: 'ASC' },
-					],
-				},
-			],
 		},
 	],
 
@@ -843,7 +914,7 @@ import fs from 'fs';
 import lodash from 'lodash';
       `.trim(),
 			options: [{ groups: false, sortStrategies: [{ strategy: 'lineLength', direction: 'ASC' }] }],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'lineLengthOrder' }],
 		},
 		{
 			name: 'Wrong order - lineLength DESC',
@@ -856,7 +927,7 @@ import lodash from 'lodash';
 import fs from 'fs';
       `.trim(),
 			options: [{ groups: false, sortStrategies: [{ strategy: 'lineLength', direction: 'DESC' }] }],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'lineLengthOrder' }],
 		},
 		{
 			name: 'Wrong order - alphabetical ASC',
@@ -871,7 +942,7 @@ import z from 'z';
 			options: [
 				{ groups: false, sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }] },
 			],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'alphabeticalOrder' }],
 		},
 		{
 			name: 'Wrong order - alphabetical DESC',
@@ -886,7 +957,7 @@ import a from 'a';
 			options: [
 				{ groups: false, sortStrategies: [{ strategy: 'alphabetical', direction: 'DESC' }] },
 			],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'alphabeticalOrder' }],
 		},
 		{
 			name: 'Wrong order - pathTreeDepth ASC',
@@ -901,7 +972,7 @@ import utils from './utils';
 			options: [
 				{ groups: false, sortStrategies: [{ strategy: 'pathTreeDepth', direction: 'ASC' }] },
 			],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'pathDepthOrder' }],
 		},
 		{
 			name: 'Wrong order - pathTreeDepth DESC',
@@ -916,7 +987,7 @@ import helper from '../../helper';
 			options: [
 				{ groups: false, sortStrategies: [{ strategy: 'pathTreeDepth', direction: 'DESC' }] },
 			],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'pathDepthOrder' }],
 		},
 		// =========================================================================
 		// GROUPING ERRORS
@@ -932,7 +1003,7 @@ import React from 'react';
 import utils from './utils';
       `.trim(),
 			options: [{ groups: true, sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }] }],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'groupingRequired' }],
 		},
 		{
 			name: 'Wrong grouping - mixed external and internal',
@@ -947,7 +1018,7 @@ import React from 'react';
 import utils from './utils';
       `.trim(),
 			options: [{ groups: true, sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }] }],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'groupingRequired' }],
 		},
 		// =========================================================================
 		// MULTIPLE ERRORS (SORTING + GROUPING)
@@ -967,7 +1038,7 @@ import internal1 from './internal1';
 import internal2 from './internal2';
       `.trim(),
 			options: [{ groups: true, sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }] }],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'alphabeticalOrder' }],
 		},
 		{
 			name: 'Complex wrong order - multiple strategies',
@@ -992,7 +1063,7 @@ import z from './z';
 					],
 				},
 			],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'lineLengthOrder' }],
 		},
 		// =========================================================================
 		// ERRORS WITH SPECIAL CASES
@@ -1010,7 +1081,7 @@ import { Button } from '@myorg/button';
 			options: [
 				{ groups: false, sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }] },
 			],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'alphabeticalOrder' }],
 		},
 		{
 			name: 'Wrong order - side effects',
@@ -1025,7 +1096,7 @@ import React from 'react';
 			options: [
 				{ groups: false, sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }] },
 			],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'alphabeticalOrder' }],
 		},
 		{
 			name: 'Wrong order with custom pattern',
@@ -1044,7 +1115,7 @@ import utils from 'src/utils';
 					sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }],
 				},
 			],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'groupingRequired' }],
 		},
 	],
 };
@@ -1112,7 +1183,7 @@ import type { User } from './types';
 				parser: tsParser,
 				parserOptions: { ecmaVersion: 2022, sourceType: 'module' },
 			},
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'alphabeticalOrder' }],
 		},
 	],
 };

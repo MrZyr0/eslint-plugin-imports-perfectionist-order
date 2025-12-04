@@ -10,15 +10,9 @@ on:
       - main
       - develop
 
-permissions:
-  contents: write
-  packages: write
-  issues: write
-  pull-requests: write
-
 jobs:
-  lint:
-    name: Linting
+  format-and-lint-checker:
+    name: Format and Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -53,8 +47,8 @@ jobs:
           NODE_ENV: development
         run: yarn install --immutable
 
-      - name: Run linting
-        run: yarn lint
+      - name: Run formatting and linting
+        run: yarn format:check && yarn lint
 
   tests-and-compatibility:
     name: Test Node.js ${{ matrix.node-version }} + ESLint ${{ matrix.eslint-version }}
@@ -122,23 +116,19 @@ jobs:
 
   release:
       name: Release
+      permissions:
+        contents: write # to be able to publish a GitHub release
+        issues: write # to be able to comment on released issues
+        pull-requests: write # to be able to comment on released pull requests
+        id-token: write # to enable use of OIDC for trusted publishing and npm provenance
+      environment: release
       needs:
-        - lint
+        - format-and-lint-checker
         - tests-and-compatibility
       runs-on: ubuntu-latest
       if: github.event_name != 'pull_request' && github.repository == 'MrZyr0/eslint-plugin-imports-perfectionist-order'
       
       steps:
-        - name: Verify NPM Token
-          env:
-            NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          run: |
-            if [ -z "$NPM_TOKEN" ]; then
-              echo "::error::NPM_TOKEN is not set"
-              exit 1
-            fi
-            echo "::notice::NPM_TOKEN is configured"
-
         - name: Checkout code
           uses: actions/checkout@v4
           with:
