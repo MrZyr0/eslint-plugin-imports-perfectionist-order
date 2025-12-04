@@ -879,27 +879,182 @@ import react from 'react';
 				},
 			],
 		},
+		{
+			name: 'Empty strategy',
+			code: `
+import react from 'react';
+import fs from 'fs';
+  `.trim(),
+			options: [{ groups: false, sortStrategies: [] }],
+		},
+		// =========================================================================
+		// TESTS FOR DESTRUCTURED IMPORTS
+		// =========================================================================
+		{
+			name: 'Sort destructured imports on single line',
+			code: `
+import { alpha, beta, gamma } from 'greek';
+import { a, b, c } from 'alphabet';
+import { x, y, z } from 'xyz';
+      `.trim(),
+			options: [{ groups: false, sortStrategies: [], sortDestructuredImports: true }],
+		},
+		{
+			name: 'Sort destructured imports on multiple lines',
+			code: `
+import {
+  a,
+  b,
+  c
+} from 'alphabet';
+import {
+  alpha,
+  beta,
+  gamma
+} from 'greek';
+      `.trim(),
+			options: [
+				{
+					groups: false,
+					sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }],
+					sortDestructuredImports: true,
+				},
+			],
+		},
+		{
+			name: 'Sort mixed default and destructured imports',
+			code: `
+import { Alert, Button, Card } from 'react-bootstrap';
+import React, { useEffect, useMemo, useState } from 'react';
+import { fetchData, processData, saveData } from './api';
+      `.trim(),
+			options: [{ groups: false, sortStrategies: [], sortDestructuredImports: true }],
+		},
+		{
+			name: 'Sort destructured imports with aliases',
+			code: `
+import { a as alpha, b as beta, c as gamma, d as foo } from 'alphabet';
+import { Component as Comp, Fragment, memo } from 'react';
+      `.trim(),
+			options: [{ groups: false, sortStrategies: [], sortDestructuredImports: true }],
+		},
 		// =========================================================================
 		// DEFAULT CONFIG
 		// =========================================================================
 		{
-			name: 'Sort by pathTreeDepth > alphabetical > line length  ASC (with groups, default config)',
+			name: 'Sort by pathTreeDepth > filename > alphabetical > line length  ASC (with groups, default config)',
 			code: `
+// External dependencies (node modules)
 import fs from 'fs';
-import lodash from 'lodash';
-import react from 'react';
-import deeperHelper from '../../deeper-helper';
-import deeperHelper2 from '../../deeper-helper2';
-import feeperHelper3 from '../../feeper-helper3';
-import helper from '../../helper';
-import helpyr from '../../helpyr';
-import config from '../config';
-import utils from './utils';
+import * as lodash from 'lodash';
+import { map, filter, reduce } from 'lodash';
+import { Button as MuiButton } from '@mui/material';
+import path from 'path';
+import React from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import type { FC, PropsWithChildren } from 'react';
+
+// Internal relative imports (ascending depth)
+import { fetchData } from '../../utils/api';
+import { formatDate } from '../../utils/date';
+import { useAuth } from '../../hooks/useAuth';
+import { Header, Footer } from '../components';
+import { User } from '../types';
+import { logger } from './utils/logger';
+
+// Internal same-level imports
+import { config } from './config';
+import { CONSTANTS } from './constants';
+import { processData } from './data';
+import { helper } from './utils/helper';
+import type { UserType } from './types';
+
+// Side effect imports
+import 'tailwindcss/tailwind.css';
+import './styles.css';
       `.trim(),
+			languageOptions: {
+				parser: tsParser,
+				parserOptions: { ecmaVersion: 2022, sourceType: 'module' },
+			},
 		},
 	],
 
 	invalid: [
+		// =========================================================================
+		// DESTRUCTURED IMPORTS ERRORS
+		// =========================================================================
+		{
+			name: 'Error on unsorted destructured imports (single line)',
+			code: `
+import { c, a, b } from 'alphabet';
+      `.trim(),
+			errors: [
+				{
+					message: "Import specifiers should be sorted alphabetically. 'a' should come before 'c'.",
+				},
+			],
+			output: `
+import { a, b, c } from 'alphabet';
+      `.trim(),
+			options: [{ groups: false, sortStrategies: [], sortDestructuredImports: true }],
+		},
+		{
+			name: 'Error on unsorted destructured imports (multi-line)',
+			code: `
+import {
+  c,
+  a,
+  b
+} from 'alphabet';
+      `.trim(),
+			errors: [
+				{
+					message: "Import specifiers should be sorted alphabetically. 'a' should come before 'c'.",
+				},
+			],
+			output: `
+import {
+  a,
+  b,
+  c
+} from 'alphabet';
+      `.trim(),
+			options: [{ groups: false, sortStrategies: [], sortDestructuredImports: true }],
+		},
+		{
+			name: 'Error on unsorted destructured imports with aliases',
+			code: `
+import { c as gamma, a as alpha, b as beta } from 'alphabet';
+      `.trim(),
+			errors: [
+				{
+					message:
+						"Import specifiers should be sorted alphabetically. 'a as alpha' should come before 'c as gamma'.",
+				},
+			],
+			output: `
+import { a as alpha, b as beta, c as gamma } from 'alphabet';
+      `.trim(),
+			options: [{ groups: false, sortStrategies: [], sortDestructuredImports: true }],
+		},
+		{
+			name: 'Error on mixed default and destructured imports',
+			code: `
+import React, { useEffect, useState, useMemo } from 'react';
+      `.trim(),
+			errors: [
+				{
+					message:
+						"Import specifiers should be sorted alphabetically. 'useMemo' should come before 'useState'.",
+				},
+			],
+			output: `
+import React, { useEffect, useMemo, useState } from 'react';
+      `.trim(),
+			options: [{ groups: false, sortStrategies: [], sortDestructuredImports: true }],
+		},
+
 		// =========================================================================
 		// SORTING ERRORS - SINGLE STRATEGY
 		// =========================================================================
@@ -914,7 +1069,7 @@ import fs from 'fs';
 import lodash from 'lodash';
       `.trim(),
 			options: [{ groups: false, sortStrategies: [{ strategy: 'lineLength', direction: 'ASC' }] }],
-			errors: [{ messageId: 'lineLengthOrder' }],
+			errors: [{ messageId: 'orderRequired' }],
 		},
 		{
 			name: 'Wrong order - lineLength DESC',
@@ -927,7 +1082,7 @@ import lodash from 'lodash';
 import fs from 'fs';
       `.trim(),
 			options: [{ groups: false, sortStrategies: [{ strategy: 'lineLength', direction: 'DESC' }] }],
-			errors: [{ messageId: 'lineLengthOrder' }],
+			errors: [{ messageId: 'orderRequired' }],
 		},
 		{
 			name: 'Wrong order - alphabetical ASC',
@@ -942,7 +1097,7 @@ import z from 'z';
 			options: [
 				{ groups: false, sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }] },
 			],
-			errors: [{ messageId: 'alphabeticalOrder' }],
+			errors: [{ messageId: 'orderRequired' }],
 		},
 		{
 			name: 'Wrong order - alphabetical DESC',
@@ -957,7 +1112,7 @@ import a from 'a';
 			options: [
 				{ groups: false, sortStrategies: [{ strategy: 'alphabetical', direction: 'DESC' }] },
 			],
-			errors: [{ messageId: 'alphabeticalOrder' }],
+			errors: [{ messageId: 'orderRequired' }],
 		},
 		{
 			name: 'Wrong order - pathTreeDepth ASC',
@@ -972,7 +1127,7 @@ import utils from './utils';
 			options: [
 				{ groups: false, sortStrategies: [{ strategy: 'pathTreeDepth', direction: 'ASC' }] },
 			],
-			errors: [{ messageId: 'pathDepthOrder' }],
+			errors: [{ messageId: 'orderRequired' }],
 		},
 		{
 			name: 'Wrong order - pathTreeDepth DESC',
@@ -987,7 +1142,7 @@ import helper from '../../helper';
 			options: [
 				{ groups: false, sortStrategies: [{ strategy: 'pathTreeDepth', direction: 'DESC' }] },
 			],
-			errors: [{ messageId: 'pathDepthOrder' }],
+			errors: [{ messageId: 'orderRequired' }],
 		},
 		// =========================================================================
 		// GROUPING ERRORS
@@ -1038,7 +1193,7 @@ import internal1 from './internal1';
 import internal2 from './internal2';
       `.trim(),
 			options: [{ groups: true, sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }] }],
-			errors: [{ messageId: 'alphabeticalOrder' }],
+			errors: [{ messageId: 'orderRequired' }],
 		},
 		{
 			name: 'Complex wrong order - multiple strategies',
@@ -1063,7 +1218,7 @@ import z from './z';
 					],
 				},
 			],
-			errors: [{ messageId: 'lineLengthOrder' }],
+			errors: [{ messageId: 'orderRequired' }],
 		},
 		// =========================================================================
 		// ERRORS WITH SPECIAL CASES
@@ -1081,7 +1236,7 @@ import { Button } from '@myorg/button';
 			options: [
 				{ groups: false, sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }] },
 			],
-			errors: [{ messageId: 'alphabeticalOrder' }],
+			errors: [{ messageId: 'orderRequired' }],
 		},
 		{
 			name: 'Wrong order - side effects',
@@ -1096,7 +1251,7 @@ import React from 'react';
 			options: [
 				{ groups: false, sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }] },
 			],
-			errors: [{ messageId: 'alphabeticalOrder' }],
+			errors: [{ messageId: 'orderRequired' }],
 		},
 		{
 			name: 'Wrong order with custom pattern',
@@ -1139,6 +1294,32 @@ import type { User } from './types';
 			},
 		},
 		{
+			name: 'TypeScript type imports with aliases',
+			code: `
+import React from 'react';
+import { getData, getOther } from './api';
+import type { AlphaUser as AlphaUserType, User as UserType } from './types';
+import type { Config as AppConfigType, Data as DataType } from './config';
+      `.trim(),
+			options: [{ groups: false, sortStrategies: [], sortDestructuredImports: true }],
+			languageOptions: {
+				parser: tsParser,
+				parserOptions: { ecmaVersion: 2022, sourceType: 'module' },
+			},
+		},
+		{
+			name: 'TypeScript type imports with mixed imports',
+			code: `
+import React, { type FC, useEffect, useState } from 'react';
+import { Button, type ButtonProps, Config } from './components/Button';
+      `.trim(),
+			options: [{ groups: false, sortStrategies: [], sortDestructuredImports: true }],
+			languageOptions: {
+				parser: tsParser,
+				parserOptions: { ecmaVersion: 2022, sourceType: 'module' },
+			},
+		},
+		{
 			name: 'Mixed import types (ungrouped)',
 			code: `
 import type { Config } from './types';
@@ -1162,6 +1343,79 @@ import * as Utils from './utils';
 		},
 	],
 	invalid: [
+		// =========================================================================
+		// TYPESCRIPT TYPE IMPORTS ERRORS
+		// =========================================================================
+		{
+			name: 'TypeScript unsorted type imports',
+			code: `
+import type { User, Config } from './types';
+      `.trim(),
+			errors: [
+				{
+					message:
+						"Import specifiers should be sorted alphabetically. 'Config' should come before 'User'.",
+				},
+			],
+			output: `
+import type { Config, User } from './types';
+      `.trim(),
+			options: [{ groups: false, sortStrategies: [], sortDestructuredImports: true }],
+			languageOptions: {
+				parser: tsParser,
+				parserOptions: { ecmaVersion: 2022, sourceType: 'module' },
+			},
+		},
+		{
+			name: 'TypeScript unsorted type imports with mixed imports',
+			code: `
+import { useState, type FC, useEffect } from 'react';
+      `.trim(),
+			errors: [
+				{
+					message:
+						"Import specifiers should be sorted alphabetically. 'FC' should come before 'useState'.",
+				},
+			],
+			output: `
+import { type FC, useEffect, useState } from 'react';
+      `.trim(),
+			options: [{ groups: false, sortStrategies: [], sortDestructuredImports: true }],
+			languageOptions: {
+				parser: tsParser,
+				parserOptions: { ecmaVersion: 2022, sourceType: 'module' },
+			},
+		},
+		{
+			name: 'TypeScript unsorted type imports with aliases',
+			code: `
+import { type User as UserType, type Config as AppConfig } from './types';
+      `.trim(),
+			errors: [
+				{
+					message:
+						"Import specifiers should be sorted alphabetically. 'Config as AppConfig' should come before 'User as UserType'.",
+				},
+			],
+			output: `
+import { type Config as AppConfig, type User as UserType } from './types';
+      `.trim(),
+			options: [
+				{
+					groups: false,
+					sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }],
+					sortDestructuredImports: true,
+				},
+			],
+			languageOptions: {
+				parser: tsParser,
+				parserOptions: { ecmaVersion: 2022, sourceType: 'module' },
+			},
+		},
+
+		// =========================================================================
+		// EXISTING TESTS
+		// =========================================================================
 		{
 			name: 'TypeScript wrong order',
 			code: `
@@ -1183,7 +1437,7 @@ import type { User } from './types';
 				parser: tsParser,
 				parserOptions: { ecmaVersion: 2022, sourceType: 'module' },
 			},
-			errors: [{ messageId: 'alphabeticalOrder' }],
+			errors: [{ messageId: 'orderRequired' }],
 		},
 	],
 };
@@ -1292,7 +1546,7 @@ function adaptTestCasesForCompatibility(testCases, isFlatFormat, isTypeScriptTes
 }
 
 // ---------------------------------------------------------------------------
-// Run RuleTester
+// Run RuleTesters
 // ---------------------------------------------------------------------------
 jsRuleTester.run('sort', rule, adaptTestCasesForCompatibility(jsTestCases, IS_ESLINT9_PLUS, false));
 
