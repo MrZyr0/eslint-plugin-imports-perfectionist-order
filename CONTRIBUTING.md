@@ -1,103 +1,179 @@
-# Contributing to eslint-plugin-imports-perfectionist-order
+# Development Guide
 
-Thank you for your interest in contributing! This document provides guidelines and instructions for contributing to the project.
+This guide explains how to set up your development environment and contribute to `eslint-plugin-imports-perfectionist-order`.
 
-## Code of Conduct
+## Table of Contents
 
-Be respectful and inclusive. We're committed to providing a welcoming and inspiring community for all.
+- [Development Guide](#development-guide)
+  - [Table of Contents](#table-of-contents)
+  - [Prerequisites](#prerequisites)
+  - [Initial Setup](#initial-setup)
+    - [Using Volta (Recommended)](#using-volta-recommended)
+    - [Using nvm](#using-nvm)
+  - [Available Commands](#available-commands)
+    - [Development](#development)
+    - [Linting \& Formatting](#linting--formatting)
+  - [Code Architecture](#code-architecture)
+    - [Key Entry Points](#key-entry-points)
+  - [Release Process](#release-process)
+  - [Coding Style](#coding-style)
+  - [Troubleshooting](#troubleshooting)
+    - ["Cannot find module" errors with PnP](#cannot-find-module-errors-with-pnp)
+    - [ESLint not finding rules](#eslint-not-finding-rules)
+    - [Version conflicts](#version-conflicts)
+  - [Getting Help](#getting-help)
+  - [Resources](#resources)
 
-## Getting Started
+## Prerequisites
 
-### Prerequisites
+- **Node.js**: 20.x or higher (LTS recommended)
+- **Yarn**: 4.10.x or higher (recommended)
+- **Git**: 2.52.x or higher
+- **Volta** (recommended) or **nvm** for Node.js version management
 
-- Node.js >= 18.0.0
-- Yarn 4.10.3 or higher
+## Initial Setup
 
-### Setup
+### Using Volta (Recommended)
 
-1. Fork the repository
-2. Clone your fork: `git clone https://github.com/YOUR_USERNAME/eslint-plugin-imports-perfectionist-order.git`
-3. Install dependencies: `yarn install`
-
-## Development Workflow
-
-### Running Tests
+[Volta](https://volta.sh/) is a JavaScript tool manager that automatically manages your toolchain.
 
 ```bash
+# Install Volta (one-time setup)
+curl https://get.volta.sh | bash
+
+# Activate Volta in the current shell
+export VOLTA_HOME="$HOME/.volta"
+export PATH="$VOLTA_HOME/bin:$PATH"
+
+# Exit the project folder and reopen it to activate Volta.
+cd ../
+cd eslint-plugin-imports-perfectionist-order
+```
+
+### Using nvm
+
+If you prefer using nvm:
+
+```bash
+# Install nvm (one-time setup)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+
+# Activate nvm in the current shell
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+# Install required Node.js version
+nvm install 20
+nvm use 20
+
+# Install Yarn
+npm install -g yarn@4.10.3
+```
+
+## Available Commands
+
+### Development
+
+```bash
+# Run all tests
 yarn test
 ```
 
-### Linting
+### Linting & Formatting
 
 ```bash
-# Check for linting errors
+# Format code
+yarn format
+
+# Check code style
 yarn lint
 
-# Fix linting errors automatically
+# Automatically fix style issues
 yarn lint:fix
 ```
 
-### Making Changes
+## Code Architecture
 
-1. Create a new branch: `git checkout -b feature/your-feature-name`
-2. Make your changes
-3. Write or update tests for your changes
-4. Run `yarn lint:fix` to ensure code quality
-5. Run `yarn test` to ensure all tests pass
-6. Commit your changes with a descriptive message
+### Key Entry Points
 
-## Commit Messages
+- `lib/rules/sort.js` - Main sorting rule implementation
+- `tests/lib/rules/sort.test.js` - Tests for the sorting rule
+- `index.js` - Plugin entry point
 
-Follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+## Release Process
 
-- `feat:` for new features
-- `fix:` for bug fixes
-- `docs:` for documentation changes
-- `test:` for test changes
-- `refactor:` for code refactoring
-- `chore:` for build process, dependencies, etc.
+1. **Create a branch** for your feature or fix following [the conventional commits standard](https://www.conventionalcommits.org/)
+2. Write clear, well-documented code
+3. Add tests for new functionality
+4. Update documentation as needed
+5. Check your code using [available commands](#available-commands)
+6. Commit your changes atomically following [conventional commits standard](https://www.conventionalcommits.org/)
+7. Push to `develop`
+8. Wait CI to execute, fix errors if any occur
+9. Try your changes in a test project
+10. Propose your changes to the original repo via a pull request to `develop`
+11. Wait for the PR to be reviewed and merged
+12. Use `develop` tag to enjoy your contribution directly
+13. Wait for the PR to be merged into `main`
+14. Thank you for your contribution!
 
-Examples:
+If you wish to use directly your forked repo, don't hesitate to edit [the workflow](.github/workflows/tests-publish.yml) to publish your repo.
 
-- `feat: add support for custom sort strategies`
-- `fix: correct regex pattern for internal imports`
-- `docs: update README with examples`
+## Coding Style
 
-## Pull Request Process
+This project uses Prettier and ESLint for code quality. Key rules:
 
-1. Update the README.md with any new features or changes
-2. Ensure all tests pass: `yarn test`
-3. Ensure linting passes: `yarn lint`
-4. Create a pull request with a clear description of your changes
-5. Link any related issues
+- **Indentation**: 2 spaces
+- **Quotes**: Single quotes
+- **Semicolons**: Always
+- **Variables**: `const` by default, `let` when needed
+- **Line Length**: 100 characters maximum
+- **Trailing Commas**: Yes
+- **Functions**: Arrow functions only when appropriate on single callback usage
 
-## Testing
+## Troubleshooting
 
-- Add tests for any new functionality
-- Ensure existing tests still pass
-- Aim for high test coverage
+### "Cannot find module" errors with PnP
 
-## Code Style
+```bash
+# Regenerate PnP files
+yarn install
 
-This project uses ESLint for code quality. Configuration is in `eslint.config.mjs`.
+# Clear cache
+yarn cache clean
+```
 
-Key rules:
+### ESLint not finding rules
 
-- Use 2-space indentation
-- Use single quotes for strings
-- Use semicolons
-- Use `const` and `let`, not `var`
-- Use arrow functions when appropriate
+```bash
+# Reinstall dependencies
+rm -rf .yarn/cache
+yarn install
+```
 
-## Reporting Issues
+### Version conflicts
 
-- Use the GitHub issue tracker
-- Provide a clear description of the issue
-- Include steps to reproduce if applicable
-- Include your environment (Node.js version, ESLint version, etc.)
+```bash
+# Check installed versions
+yarn why eslint
+yarn why mocha
 
-## Questions?
+# Update to compatible versions
+yarn upgrade
+```
 
-Feel free to open an issue or discussion for any questions.
+## Getting Help
 
-Thank you for contributing!
+- Review [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines
+- Open an issue on GitHub
+- Check existing issues and discussions
+
+## Resources
+
+- [Volta Documentation](https://docs.volta.sh/)
+- [Yarn PnP Documentation](https://yarnpkg.com/features/pnp)
+- [ESLint Documentation](https://eslint.org/docs/developer-guide/working-with-plugins)
+- [ESLint Plugin Development](https://eslint.org/docs/latest/extend/plugins)
+- [ESLint Rules Guide](https://eslint.org/docs/developer-guide/working-with-rules)
+- [Mocha Testing Framework](https://mochajs.org/)
+- [Conventional Commits](https://www.conventionalcommits.org/)
