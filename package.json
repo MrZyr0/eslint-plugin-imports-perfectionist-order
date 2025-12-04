@@ -44,9 +44,7 @@
 		"format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
 		"format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,md}\"",
 		"test": "mocha tests --recursive",
-		"release": "semantic-release",
-		"check:node": "node --version && echo 'Node.js version OK'",
-		"check:eslint": "eslint --version && echo 'ESLint version OK'"
+		"release": "semantic-release"
 	},
 	"peerDependencies": {
 		"eslint": ">=8.0.0"
