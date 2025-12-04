@@ -8,6 +8,87 @@ import rule from '../../../lib/rules/sort.js';
 const jsTestCases = {
 	valid: [
 		// =========================================================================
+		// TESTS FOR FILENAME STRATEGY
+		// =========================================================================
+		{
+			name: 'Sort by filename ASC (external first)',
+			code: `
+import fs from 'fs';
+import lodash from 'lodash';
+import react from 'react';
+import config from '../config';
+import helper from '../../helper';
+import utils from './utils';
+      `.trim(),
+			options: [{ groups: true, sortStrategies: [{ strategy: 'filename', direction: 'ASC' }] }],
+		},
+		{
+			name: 'Sort by filename DESC (external first)',
+			code: `
+import react from 'react';
+import lodash from 'lodash';
+import fs from 'fs';
+import utils from './utils';
+import helper from '../../helper';
+import config from '../config';
+      `.trim(),
+			options: [{ groups: true, sortStrategies: [{ strategy: 'filename', direction: 'DESC' }] }],
+		},
+		{
+			name: 'Sort by filename with different file extensions',
+			code: `
+import './styles.css';
+import './styles.scss';
+import './tests.js';
+import './utils';
+import './utils.test';
+import './utils.ts';
+      `.trim(),
+			options: [{ groups: false, sortStrategies: [{ strategy: 'filename', direction: 'ASC' }] }],
+		},
+		{
+			name: 'Sort by filename with scoped packages',
+			code: `
+import { ThemeProvider } from '@emotion/react';
+import fs from 'fs';
+import { Button } from '@mui/material';
+import react from 'react';
+import { api } from '@/services/api';
+import { useAuth } from '@/hooks/useAuth';
+      `.trim(),
+			options: [{ groups: true, sortStrategies: [{ strategy: 'filename', direction: 'ASC' }] }],
+		},
+		{
+			name: 'Sort by pathTreeDepth > filename ASC',
+			code: `
+import fs from 'fs';
+import react from 'react';
+import deeperHelper from '../../deeper-helper';
+import helper from '../../helper';
+import config from '../config';
+import utils from './utils';
+      `.trim(),
+			options: [
+				{
+					groups: true,
+					sortStrategies: [
+						{ strategy: 'pathTreeDepth', direction: 'ASC' },
+						{ strategy: 'filename', direction: 'ASC' },
+					],
+				},
+			],
+		},
+		{
+			name: 'Sort by filename with query parameters and hashes',
+			code: `
+import './styles.css?module';
+import './styles.css';
+import './styles.scss#hash';
+import './styles.scss';
+      `.trim(),
+			options: [{ groups: false, sortStrategies: [{ strategy: 'filename', direction: 'ASC' }] }],
+		},
+		// =========================================================================
 		// TESTS WITH GROUPS + DIRECTION ASC
 		// =========================================================================
 		{
