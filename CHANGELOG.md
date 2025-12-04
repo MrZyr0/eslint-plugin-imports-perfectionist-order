@@ -1,3 +1,10 @@
+# [1.0.0-develop.2](https://github.com/MrZyr0/eslint-plugin-imports-perfectionist-order/compare/v1.0.0-develop.1...v1.0.0-develop.2) (2025-12-04)
+
+
+### Bug Fixes
+
+* default config compatibility with eslint <9.15.0 ([2edca68](https://github.com/MrZyr0/eslint-plugin-imports-perfectionist-order/commit/2edca68b37018334674f5043ef20d9fa3202c349))
+
 # 1.0.0-develop.1 (2025-12-04)
 
 
