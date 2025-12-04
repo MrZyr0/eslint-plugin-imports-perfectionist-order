@@ -1,3 +1,15 @@
+# [1.0.0-develop.4](https://github.com/MrZyr0/eslint-plugin-imports-perfectionist-order/compare/v1.0.0-develop.3...v1.0.0-develop.4) (2025-12-04)
+
+
+### Features
+
+* add destructured imports sorting ([deffb12](https://github.com/MrZyr0/eslint-plugin-imports-perfectionist-order/commit/deffb12bdc06a74044fc94f0b2bae29e8b1b64d7))
+
+
+### BREAKING CHANGES
+
+* default config changed, result could change
+
 # 1.0.0 (2025-12-04)
 
 
