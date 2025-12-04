@@ -1,7 +1,8 @@
 # eslint-plugin-imports-perfectionist-order
 
 [![npm version](https://img.shields.io/npm/v/eslint-plugin-imports-perfectionist-order.svg)](https://www.npmjs.com/package/eslint-plugin-imports-perfectionist-order)
-[![CI](https://github.com/MrZyr0/eslint-plugin-imports-perfectionist-order/actions/workflows/tests-publish.yml/badge.svg?branch=$GITHUB_REF_NAME)](https://github.com/MrZyr0/eslint-plugin-imports-perfectionist-order/actions/workflows/tests-publish.yml?query=branch%3A$GITHUB_REF_NAME)
+[![Build Status (Main)](https://github.com/MrZyr0/eslint-plugin-imports-perfectionist-order/actions/workflows/tests-publish.yml/badge.svg?branch=main)](https://github.com/MrZyr0/eslint-plugin-imports-perfectionist-order/actions/workflows/tests-publish.yml)
+[![Build Status (Develop)](https://github.com/MrZyr0/eslint-plugin-imports-perfectionist-order/actions/workflows/tests-publish.yml/badge.svg?branch=develop)](https://github.com/MrZyr0/eslint-plugin-imports-perfectionist-order/actions/workflows/tests-publish.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ESLint plugin to sort imports with fully configurable strategies. Allows you to define custom sorting rules for your project's imports.
