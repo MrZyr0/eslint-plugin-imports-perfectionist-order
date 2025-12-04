@@ -61,7 +61,7 @@ export default defineConfig([
 			'grouped-accessor-pairs': ['error', 'getBeforeSet'],
 			'guard-for-in': 'error',
 			'logical-assignment-operators': ['error', 'never'],
-			'max-depth': ['error', 3],
+			'max-depth': ['error', 5],
 			'max-nested-callbacks': ['error', 2],
 			'no-array-constructor': 'error',
 			'no-bitwise': 'warn',
