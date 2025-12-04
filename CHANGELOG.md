@@ -1,3 +1,24 @@
+# 1.0.0 (2025-12-04)
+
+
+### Bug Fixes
+
+* default config compatibility with eslint <9.15.0 ([2edca68](https://github.com/MrZyr0/eslint-plugin-imports-perfectionist-order/commit/2edca68b37018334674f5043ef20d9fa3202c349))
+
+
+### Features
+
+* add filename strategy to default config ([7467114](https://github.com/MrZyr0/eslint-plugin-imports-perfectionist-order/commit/7467114f3bfa3b97a128e881eba1101bbe86bdc9))
+* add much detailed error messages ([9ca1e45](https://github.com/MrZyr0/eslint-plugin-imports-perfectionist-order/commit/9ca1e45ed22855f3e75c118fcdbb37d3a2ef1d53))
+* add new filename based strategy ([ac28741](https://github.com/MrZyr0/eslint-plugin-imports-perfectionist-order/commit/ac28741f729765860e61a17f5e8677dc647e0539))
+* initial release with sorting strategies ([cd4fd5e](https://github.com/MrZyr0/eslint-plugin-imports-perfectionist-order/commit/cd4fd5e9269767544a5466a0093542ed44b4eda6))
+
+
+### BREAKING CHANGES
+
+* Default sorting rules updated, imports will be sorted differently
+* Initial release
+
 # [1.0.0-develop.3](https://github.com/MrZyr0/eslint-plugin-imports-perfectionist-order/compare/v1.0.0-develop.2...v1.0.0-develop.3) (2025-12-04)
 
 
