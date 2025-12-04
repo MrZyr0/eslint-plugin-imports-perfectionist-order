@@ -815,16 +815,6 @@ import helpyr from '../../helpyr';
 import config from '../config';
 import utils from './utils';
       `.trim(),
-			options: [
-				{
-					groups: true,
-					sortStrategies: [
-						{ strategy: 'pathTreeDepth', direction: 'ASC' },
-						{ strategy: 'alphabetical', direction: 'ASC' },
-						{ strategy: 'lineLength', direction: 'ASC' },
-					],
-				},
-			],
 		},
 	],
 
