@@ -833,7 +833,7 @@ import fs from 'fs';
 import lodash from 'lodash';
       `.trim(),
 			options: [{ groups: false, sortStrategies: [{ strategy: 'lineLength', direction: 'ASC' }] }],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'lineLengthOrder' }],
 		},
 		{
 			name: 'Wrong order - lineLength DESC',
@@ -846,7 +846,7 @@ import lodash from 'lodash';
 import fs from 'fs';
       `.trim(),
 			options: [{ groups: false, sortStrategies: [{ strategy: 'lineLength', direction: 'DESC' }] }],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'lineLengthOrder' }],
 		},
 		{
 			name: 'Wrong order - alphabetical ASC',
@@ -861,7 +861,7 @@ import z from 'z';
 			options: [
 				{ groups: false, sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }] },
 			],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'alphabeticalOrder' }],
 		},
 		{
 			name: 'Wrong order - alphabetical DESC',
@@ -876,7 +876,7 @@ import a from 'a';
 			options: [
 				{ groups: false, sortStrategies: [{ strategy: 'alphabetical', direction: 'DESC' }] },
 			],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'alphabeticalOrder' }],
 		},
 		{
 			name: 'Wrong order - pathTreeDepth ASC',
@@ -891,7 +891,7 @@ import utils from './utils';
 			options: [
 				{ groups: false, sortStrategies: [{ strategy: 'pathTreeDepth', direction: 'ASC' }] },
 			],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'pathDepthOrder' }],
 		},
 		{
 			name: 'Wrong order - pathTreeDepth DESC',
@@ -906,7 +906,7 @@ import helper from '../../helper';
 			options: [
 				{ groups: false, sortStrategies: [{ strategy: 'pathTreeDepth', direction: 'DESC' }] },
 			],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'pathDepthOrder' }],
 		},
 		// =========================================================================
 		// GROUPING ERRORS
@@ -922,7 +922,7 @@ import React from 'react';
 import utils from './utils';
       `.trim(),
 			options: [{ groups: true, sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }] }],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'groupingRequired' }],
 		},
 		{
 			name: 'Wrong grouping - mixed external and internal',
@@ -937,7 +937,7 @@ import React from 'react';
 import utils from './utils';
       `.trim(),
 			options: [{ groups: true, sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }] }],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'groupingRequired' }],
 		},
 		// =========================================================================
 		// MULTIPLE ERRORS (SORTING + GROUPING)
@@ -957,7 +957,7 @@ import internal1 from './internal1';
 import internal2 from './internal2';
       `.trim(),
 			options: [{ groups: true, sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }] }],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'alphabeticalOrder' }],
 		},
 		{
 			name: 'Complex wrong order - multiple strategies',
@@ -982,7 +982,7 @@ import z from './z';
 					],
 				},
 			],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'lineLengthOrder' }],
 		},
 		// =========================================================================
 		// ERRORS WITH SPECIAL CASES
@@ -1000,7 +1000,7 @@ import { Button } from '@myorg/button';
 			options: [
 				{ groups: false, sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }] },
 			],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'alphabeticalOrder' }],
 		},
 		{
 			name: 'Wrong order - side effects',
@@ -1015,7 +1015,7 @@ import React from 'react';
 			options: [
 				{ groups: false, sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }] },
 			],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'alphabeticalOrder' }],
 		},
 		{
 			name: 'Wrong order with custom pattern',
@@ -1034,7 +1034,7 @@ import utils from 'src/utils';
 					sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }],
 				},
 			],
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'groupingRequired' }],
 		},
 	],
 };
@@ -1102,7 +1102,7 @@ import type { User } from './types';
 				parser: tsParser,
 				parserOptions: { ecmaVersion: 2022, sourceType: 'module' },
 			},
-			errors: [{ messageId: 'sortImports' }],
+			errors: [{ messageId: 'alphabeticalOrder' }],
 		},
 	],
 };
