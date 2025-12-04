@@ -11,8 +11,8 @@ on:
       - develop
 
 jobs:
-  lint:
-    name: Linting
+  format-and-lint-checker:
+    name: Format and Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -47,8 +47,8 @@ jobs:
           NODE_ENV: development
         run: yarn install --immutable
 
-      - name: Run linting
-        run: yarn lint
+      - name: Run formatting and linting
+        run: yarn format:check && yarn lint
 
   tests-and-compatibility:
     name: Test Node.js ${{ matrix.node-version }} + ESLint ${{ matrix.eslint-version }}
@@ -123,7 +123,7 @@ jobs:
         id-token: write # to enable use of OIDC for trusted publishing and npm provenance
       environment: release
       needs:
-        - lint
+        - format-and-lint-checker
         - tests-and-compatibility
       runs-on: ubuntu-latest
       if: github.event_name != 'pull_request' && github.repository == 'MrZyr0/eslint-plugin-imports-perfectionist-order'
