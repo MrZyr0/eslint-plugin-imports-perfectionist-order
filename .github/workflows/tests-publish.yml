@@ -1,4 +1,4 @@
-name: Tests
+name: Tests & publish
 
 on:
   push:
@@ -9,6 +9,12 @@ on:
     branches:
       - main
       - develop
+
+permissions:
+  contents: write
+  packages: write
+  issues: write
+  pull-requests: write
 
 jobs:
   lint:
@@ -50,7 +56,7 @@ jobs:
       - name: Run linting
         run: yarn lint
 
-  test-matrix:
+  tests-and-compatibility:
     name: Test Node.js ${{ matrix.node-version }} + ESLint ${{ matrix.eslint-version }}
     runs-on: ubuntu-latest
     strategy:
@@ -113,3 +119,50 @@ jobs:
         env:
           NODE_ENV: development
         run: yarn test
+
+  release:
+      name: Release
+      needs:
+        - lint
+        - tests-and-compatibility
+      runs-on: ubuntu-latest
+      if: github.event_name != 'pull_request' && github.repository == 'MrZyr0/eslint-plugin-imports-perfectionist-order'
+      
+      steps:
+        - name: Verify NPM Token
+          env:
+            NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          run: |
+            if [ -z "$NPM_TOKEN" ]; then
+              echo "::error::NPM_TOKEN is not set"
+              exit 1
+            fi
+            echo "::notice::NPM_TOKEN is configured"
+
+        - name: Checkout code
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0 # Important for semantic-release to analyze the complete history
+            token: ${{ secrets.GITHUB_TOKEN }}
+
+        - name: Setup Node.js
+          uses: actions/setup-node@v4
+          with:
+            node-version: "lts/-3"
+
+        - name: Install dependencies for semantic-release only
+          run: |
+            npm install -g \
+            semantic-release \
+            @semantic-release/changelog \
+            @semantic-release/git \
+            @semantic-release/github \
+            @semantic-release/npm \
+            @semantic-release/commit-analyzer \
+            @semantic-release/release-notes-generator
+
+        - name: Create Release
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          run: npx semantic-release
