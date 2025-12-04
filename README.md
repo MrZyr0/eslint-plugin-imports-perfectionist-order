@@ -41,7 +41,7 @@ export default [
 	{
 		plugins: { 'imports-perfectionist-order': importsPerfectionistOrder },
 		rules: {
-			'imports-perfectionist-order/sort-imports': [
+			'imports-perfectionist-order/sort': [
 				'error',
 				{ groups: true, internalPattern: '^@/', sortStrategies: ['lineLength', 'alphabetical'] },
 			],
@@ -57,7 +57,7 @@ export default [
 module.exports = {
 	plugins: ['imports-perfectionist-order'],
 	rules: {
-		'imports-perfectionist-order/sort-imports': [
+		'imports-perfectionist-order/sort': [
 			'error',
 			{
 				groups: true,

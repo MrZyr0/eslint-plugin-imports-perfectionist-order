@@ -70,7 +70,7 @@ eslint-plugin-imports-perfectionist-order/
 ├── tests/
 │   └── lib/
 │       └── rules/
-│           └── sort-imports.test.js  # Rule tests
+│           └── sort.test.js  # Rule tests
 ├── index.js                 # Plugin entry point
 ├── package.json             # Project metadata
 ├── .yarnrc.yml              # Yarn PnP configuration
@@ -157,12 +157,12 @@ yarn test
 yarn test --watch
 
 # Run specific test file
-yarn test tests/lib/rules/sort-imports.test.js
+yarn test tests/lib/rules/sort.test.js
 ```
 
 ### Writing Tests
 
-Tests use Mocha and ESLint's RuleTester. See `tests/lib/rules/sort-imports.test.js` for examples.
+Tests use Mocha and ESLint's RuleTester. See `tests/lib/rules/sort.test.js` for examples.
 
 ### Test Coverage
 
