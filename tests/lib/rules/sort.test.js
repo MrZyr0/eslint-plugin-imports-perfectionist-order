@@ -81,10 +81,10 @@ import utils from './utils';
 		{
 			name: 'Sort by filename with query parameters and hashes',
 			code: `
-import './styles.css?module';
 import './styles.css';
-import './styles.scss#hash';
+import './styles.css?module';
 import './styles.scss';
+import './styles.scss#hash';
       `.trim(),
 			options: [{ groups: false, sortStrategies: [{ strategy: 'filename', direction: 'ASC' }] }],
 		},
@@ -630,7 +630,7 @@ import { useState as useStateAlias } from 'react';
 			name: 'Multiple specifiers',
 			code: `
 import { a, b, c } from 'module';
-import { foo, bar } from './local';
+import { bar, foo } from './local';
 import { x } from 'module2';
       `.trim(),
 			options: [
@@ -730,16 +730,6 @@ import React from 'react';
 import utils from './utils';
       `.trim(),
 			options: [{ groups: true, sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }] }],
-		},
-		{
-			name: 'Imports with trailing commas',
-			code: `
-import { a, b, } from 'module';
-import React from 'react';
-      `.trim(),
-			options: [
-				{ groups: false, sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }] },
-			],
 		},
 		{
 			name: 'Module aliases (@/ and ~/)',
@@ -947,18 +937,18 @@ import { Component as Comp, Fragment, memo } from 'react';
 // External dependencies (node modules)
 import fs from 'fs';
 import * as lodash from 'lodash';
-import { map, filter, reduce } from 'lodash';
+import { filter, map, reduce } from 'lodash';
 import { Button as MuiButton } from '@mui/material';
 import path from 'path';
 import React from 'react';
-import { useState, useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { FC, PropsWithChildren } from 'react';
 
 // Internal relative imports (ascending depth)
 import { fetchData } from '../../utils/api';
 import { formatDate } from '../../utils/date';
 import { useAuth } from '../../hooks/useAuth';
-import { Header, Footer } from '../components';
+import { Footer, Header } from '../components';
 import { User } from '../types';
 import { logger } from './utils/logger';
 
@@ -984,6 +974,26 @@ import './styles.css';
 		// =========================================================================
 		// DESTRUCTURED IMPORTS ERRORS
 		// =========================================================================
+		{
+			name: 'Imports with trailing commas',
+			code: `
+import { a, b, } from 'module';
+import React from 'react';
+      `.trim(),
+			errors: [
+				{
+					message:
+						"Import specifiers should be sorted alphabetically. 'undefined' should come before ''.",
+				},
+			],
+			output: `
+import { a, b } from 'module';
+import React from 'react';
+			`.trim(),
+			options: [
+				{ groups: false, sortStrategies: [{ strategy: 'alphabetical', direction: 'ASC' }] },
+			],
+		},
 		{
 			name: 'Error on unsorted destructured imports (single line)',
 			code: `
