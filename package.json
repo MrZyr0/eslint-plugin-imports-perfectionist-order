@@ -1,6 +1,6 @@
 {
 	"name": "eslint-plugin-imports-perfectionist-order",
-	"version": "1.0.0-develop.5",
+	"version": "1.1.0",
 	"description": "ESLint plugin that allows you to efficiently sort imports and is fully configurable according to your preferences.",
 	"main": "index.js",
 	"type": "module",
