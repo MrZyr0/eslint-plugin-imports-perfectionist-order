@@ -22,7 +22,7 @@
 		],
 		["@semantic-release/release-notes-generator", { "preset": "angular" }],
 		["@semantic-release/changelog", { "changelogFile": "CHANGELOG.md" }],
-		["@semantic-release/npm", { "npmPublish": true, "provenance": true }],
+		["@semantic-release/npm", { "npmPublish": true, "provenance": true, "assets": ["README.md"] }],
 		[
 			"@semantic-release/git",
 			{
